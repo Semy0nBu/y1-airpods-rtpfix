@@ -1,6 +1,6 @@
 # Build From Source
 
-This repository includes the C source code for the AirPods 2 RTP timestamp fix proxy. It does not include compiled `.so` binaries, firmware images, or vendor libraries.
+This repo includes the C source code for the AirPods 2 RTP timestamp fix proxy. It does not include compiled `.so` binaries, firmware images, or vendor libraries.
 
 ## Required Tools
 
@@ -20,11 +20,11 @@ Example PowerShell session:
 $env:ANDROID_NDK_ROOT = "C:\Android\android-ndk-r26d"
 ```
 
-You can also pass the NDK path directly to the build script with `-AndroidNdkRoot`.
+You can also pass the NDK path directly to the build script with `-AndroidNdkRoot` if you do not want to set an environment variable.
 
 ## Build The Minimal RTPFIX Proxy
 
-From the repository root:
+From the repo root:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\build_minimal_airpods_rtpfix_proxy.ps1
@@ -42,7 +42,7 @@ Expected output:
 build/libbluetoothdrv.so
 ```
 
-The `build/` directory and generated `.so` files are ignored by git.
+The `build/` directory and generated `.so` files are ignored by git. They are local build output and should not be committed.
 
 ## What The Output Is
 

@@ -1,16 +1,16 @@
 # Official 3.0.7 Fix Procedure
 
-This is a high-level procedure for reproducing the confirmed Innioasis Y1 official firmware 3.0.7 AirPods 2 RTP timestamp fix. It intentionally does not include firmware images, vendor libraries, or patched binaries.
+This guide shows the high-level process used for the confirmed Innioasis Y1 official firmware 3.0.7 AirPods 2 RTP timestamp fix. It does not include firmware images, vendor libraries, or patched binaries.
 
 ## Symptom
 
-AirPods 2 pair and connect to the Y1, and the music player appears to play a track, but no sound comes through the AirPods. Other Bluetooth headphones may work.
+AirPods 2 pair and connect to the Y1, and the music player appears to play a track, but no sound comes through the AirPods. Other Bluetooth headphones may work on the same device.
 
-The working diagnosis is that the outgoing A2DP/SBC media stream starts, but RTP timestamp progression is broken or incompatible with AirPods 2.
+The working diagnosis is that the outgoing A2DP/SBC media stream starts, but its RTP timestamp progression is broken or incompatible with AirPods 2.
 
 ## Confirmed Result
 
-The final official 3.0.7 build uses an ADB-enabled `system.img` and the following runtime layout:
+The final official 3.0.7 build uses an ADB-enabled `system.img` and this runtime layout:
 
 ```text
 /system/lib/libbluetoothdrv.so       = RTP timestamp fix proxy
@@ -18,9 +18,9 @@ The final official 3.0.7 build uses an ADB-enabled `system.img` and the followin
 /system/lib/libmtkbtextadpa2dp.so    = untouched original library
 ```
 
-Bluetooth works, AirPods 2 audio works, and AirPods controls for play/pause, next track, and previous track work. No separate AVRCP patch is needed.
+With that layout, Bluetooth works, AirPods 2 audio works, and AirPods controls for play/pause, next track, and previous track work. No separate AVRCP patch was needed.
 
-## Critical Warning
+## Important Proxy Requirement
 
 Do not install the proxy by itself. The proxy forwards real driver operations to the original official Bluetooth driver library, which must be available as:
 
@@ -28,16 +28,16 @@ Do not install the proxy by itself. The proxy forwards real driver operations to
 /system/lib/libbluetoothdrv_real.so
 ```
 
-A proxy-only installation can break Bluetooth startup. The earlier failed layout installed the proxy without `libbluetoothdrv_real.so`.
+If `libbluetoothdrv_real.so` is missing, Bluetooth may fail to start because the proxy has no real driver library to delegate to. The earlier failed layout installed the proxy without this required real library.
 
 ## High-Level Steps
 
 1. Extract the official Innioasis Y1 firmware 3.0.7 package locally.
-2. Copy `system.img` to a separate working file. Keep the original image unchanged.
+2. Copy `system.img` to a separate working file so the original image stays unchanged.
 3. Enable ADB by editing `build.prop` inside the copied `system.img`.
 4. Build or obtain the RTP timestamp fix proxy locally.
 5. Extract the original official 3.0.7 `/system/lib/libbluetoothdrv.so` from the firmware image.
-6. Insert the proxy and real library into the copied `system.img`:
+6. Insert the proxy and the original real library into the copied `system.img`:
 
 ```text
 /lib/libbluetoothdrv.so       = RTP timestamp fix proxy
@@ -54,6 +54,8 @@ Inside `system.img`, `/lib/...` maps to `/system/lib/...` at runtime.
 /lib/libbluetoothdrv_real.so
 ```
 
+This check helps catch path mistakes before flashing.
+
 9. Run a read-only filesystem check on the modified image:
 
 ```text
@@ -65,6 +67,6 @@ e2fsck -f -n system.img
 
 ## Notes
 
-For production builds, ADB may be visible while `adb remount` still fails. That is expected. The confirmed deployment path for official 3.0.7 is offline `system.img` modification rather than live replacement through `adb remount`.
+On production firmware, ADB can be visible while `adb root` and `adb remount` still fail. That is expected. For production builds, the reliable path is offline `system.img` modification rather than live replacement through `adb remount`.
 
 The final minimal fix leaves `libmtkbtextadpa2dp.so` untouched. The compatibility fix is in the Bluetooth driver write path, where the proxy normalizes outgoing A2DP/SBC RTP timestamps.

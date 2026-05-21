@@ -1,13 +1,15 @@
 # Installing The Locally Patched Image With SP Flash Tool
 
-This guide assumes that you own the device and have legally obtained the official Innioasis Y1 firmware package. This repository does not include firmware images or vendor binaries.
+This guide assumes that you own the device and have legally obtained the official Innioasis Y1 firmware package. This repo does not include firmware images or vendor binaries.
+
+The goal is to install a patched `system.img` that you prepared locally. Take your time with the verification steps. They are there to catch mistakes before anything is flashed.
 
 ## What This Guide Does
 
 This guide covers installing a locally prepared `system.img` for official Innioasis Y1 firmware 3.0.7.
 
 - You prepare a modified `system.img` locally.
-- The modified image keeps official firmware 3.0.7.
+- The modified image stays based on official firmware 3.0.7.
 - Only the Bluetooth driver layout is changed.
 - `boot.img` is not changed.
 - `libmtkbtextadpa2dp.so` is not changed.
@@ -27,7 +29,7 @@ You need:
 - Innioasis Updater
 - WSL2/Ubuntu with `debugfs` and `e2fsck`
 
-Do not put firmware images, vendor libraries, patched binaries, dumps, or logs in this repository.
+Keep firmware images, vendor libraries, patched binaries, dumps, and logs out of this repo.
 
 ## Expected Final Image Layout
 
@@ -41,7 +43,7 @@ Inside `system.img`, the expected final layout is:
 
 Inside `system.img`, `/lib/...` becomes `/system/lib/...` at runtime.
 
-Do not install the proxy alone. It requires the original official Bluetooth driver at `/lib/libbluetoothdrv_real.so`.
+Do not install the proxy alone. It needs the original official Bluetooth driver at `/lib/libbluetoothdrv_real.so`.
 
 ## Step 1 - Back Up The Original Updater Image
 
@@ -54,7 +56,7 @@ Copy-Item "$u\system.img" "$u\system.img.official_backup_3_0_7" -Force
 Get-FileHash "$u\system.img"
 ```
 
-The backup is important for rollback. Keep it outside this repository and do not commit it.
+This backup gives you a simple rollback path. Keep it outside this repo and do not commit it.
 
 ## Step 2 - Verify The Patched system.img
 
@@ -70,11 +72,11 @@ Run a read-only filesystem check from WSL:
 wsl sh -lc "cd /mnt/d/path/to/project && e2fsck -f -n patched/system.img"
 ```
 
-`e2fsck` should finish without critical errors. The `-n` flag makes the check read-only.
+`e2fsck` should finish without critical errors. The `-n` flag keeps the check read-only, so it should not modify the image.
 
 ## Step 3 - Verify The Two Bluetooth Libraries Inside The Image
 
-Dump both files back out of the patched image and compare SHA256 hashes.
+Dump both Bluetooth driver files back out of the patched image and compare SHA256 hashes. This confirms that the proxy and original real library were placed where you expected.
 
 Example from PowerShell:
 
@@ -87,7 +89,7 @@ Expected result:
 - the proxy hash must match `verify/libbluetoothdrv.so.from_img`
 - the original official hash must match `verify/libbluetoothdrv_real.so.from_img`
 
-Do not flash if either hash does not match.
+Do not flash if either hash does not match. A mismatch usually means the wrong file was inserted or the wrong image was checked.
 
 ## Step 4 - Replace system.img In The Innioasis Updater Folder
 
@@ -102,7 +104,7 @@ Get-FileHash "$u\system.img"
 Get-FileHash "D:\path\to\patched\system.img"
 ```
 
-The two hashes must match.
+The two hashes must match. This confirms the updater folder now contains the patched image you verified.
 
 ## Step 5 - Open SP Flash Tool Helper
 
@@ -138,6 +140,8 @@ After flashing:
 - Test play/pause.
 - Test next track.
 - Test previous track.
+
+These tests confirm both A2DP audio and AVRCP media controls.
 
 ## Rollback
 

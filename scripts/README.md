@@ -1,6 +1,8 @@
 # Scripts
 
-This directory is reserved for future helper scripts. Scripts in this repository should be source-only and must not include firmware, vendor binaries, patched binaries, or device dumps.
+This directory is for helper scripts that are safe to publish. Scripts here should be source-only and should not include firmware, vendor binaries, patched binaries, or device dumps.
+
+The current build script can compile the RTP timestamp fix proxy locally when you provide an Android NDK. Future scripts may help with image preparation, but they should stay careful and reversible.
 
 Expected script responsibilities:
 
@@ -13,4 +15,4 @@ Expected script responsibilities:
 - verify SHA256 hashes
 - run `e2fsck -f -n`
 
-Scripts must never flash automatically. Flashing should remain a manual user action performed with the Innioasis Updater SP Flash Tool helper after reviewing the modified image and rollback plan.
+Scripts should never flash automatically. Flashing should stay a manual user action with the Innioasis Updater SP Flash Tool helper, after the user has reviewed the modified image and has a rollback backup.
