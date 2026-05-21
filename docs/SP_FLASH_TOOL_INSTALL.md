@@ -1,72 +1,115 @@
-# SP Flash Tool Installation
+# Installing The Locally Patched Image With SP Flash Tool
 
-This guide explains how to install a locally patched `system.img` using the Innioasis Updater SP Flash Tool helper.
+This guide assumes that you own the device and have legally obtained the official Innioasis Y1 firmware package. This repository does not include firmware images or vendor binaries.
 
-This guide assumes you legally obtained official Innioasis Y1 firmware 3.0.7. This repository does not distribute firmware, vendor libraries, patched binaries, or complete images. You must build or prepare the patched `system.img` locally.
+## What This Guide Does
 
-## Expected Patched Image Layout
+This guide covers installing a locally prepared `system.img` for official Innioasis Y1 firmware 3.0.7.
 
-Inside `system.img`, the final expected layout is:
+- You prepare a modified `system.img` locally.
+- The modified image keeps official firmware 3.0.7.
+- Only the Bluetooth driver layout is changed.
+- `boot.img` is not changed.
+- `libmtkbtextadpa2dp.so` is not changed.
+- The final image is flashed using the Innioasis Updater SP Flash Tool helper.
+
+## Required Files
+
+You need:
+
+- Official Innioasis Y1 firmware 3.0.7
+- Original `system.img`
+- Original `boot.img`
+- `MT6572_Android_scatter.txt`
+- RTP timestamp fix proxy built locally
+- Original official `libbluetoothdrv.so` extracted locally
+- Windows PC
+- Innioasis Updater
+- WSL2/Ubuntu with `debugfs` and `e2fsck`
+
+Do not put firmware images, vendor libraries, patched binaries, dumps, or logs in this repository.
+
+## Expected Final Image Layout
+
+Inside `system.img`, the expected final layout is:
 
 ```text
-/lib/libbluetoothdrv.so = RTP timestamp fix proxy
-/lib/libbluetoothdrv_real.so = original official 3.0.7 libbluetoothdrv.so
-/lib/libmtkbtextadpa2dp.so = untouched
+/lib/libbluetoothdrv.so       = RTP timestamp fix proxy
+/lib/libbluetoothdrv_real.so  = original official 3.0.7 libbluetoothdrv.so
+/lib/libmtkbtextadpa2dp.so    = untouched original library
 ```
 
-Inside the Android runtime, these paths map to `/system/lib/...`.
+Inside `system.img`, `/lib/...` becomes `/system/lib/...` at runtime.
 
-Do not install the proxy alone. The proxy requires the original official Bluetooth driver library at `/lib/libbluetoothdrv_real.so`.
+Do not install the proxy alone. It requires the original official Bluetooth driver at `/lib/libbluetoothdrv_real.so`.
 
-## Verify Before Flashing
+## Step 1 - Back Up The Original Updater Image
 
-Before replacing any updater files, verify the patched image contents locally.
+Use a PowerShell prompt. Replace `USER` with your Windows user name:
 
-Recommended checks:
+```powershell
+$u = "C:\Users\USER\AppData\Local\Innioasis Updater"
 
-1. Dump `/lib/libbluetoothdrv.so` back out of the patched image and compare its SHA256 hash with your locally built RTP timestamp fix proxy.
-2. Dump `/lib/libbluetoothdrv_real.so` back out of the patched image and compare its SHA256 hash with the original official 3.0.7 `libbluetoothdrv.so`.
-3. Confirm `/lib/libmtkbtextadpa2dp.so` was not modified.
-4. Run a read-only filesystem check:
-
-```text
-e2fsck -f -n system.img
+Copy-Item "$u\system.img" "$u\system.img.official_backup_3_0_7" -Force
+Get-FileHash "$u\system.img"
 ```
 
-Do not flash if hashes do not match the expected local files.
+The backup is important for rollback. Keep it outside this repository and do not commit it.
 
-## Back Up The Original Updater Image
+## Step 2 - Verify The Patched system.img
 
-The Innioasis Updater keeps its local image at a path like:
+Check the hash of your locally prepared patched image:
 
-```text
-C:\Users\<USER>\AppData\Local\Innioasis Updater\system.img
+```powershell
+Get-FileHash "D:\path\to\patched\system.img"
 ```
 
-Before replacing it, make a backup copy of the original file. For example:
+Run a read-only filesystem check from WSL:
 
-```text
-C:\Users\<USER>\AppData\Local\Innioasis Updater\system.img.original_3_0_7_backup
+```powershell
+wsl sh -lc "cd /mnt/d/path/to/project && e2fsck -f -n patched/system.img"
 ```
 
-Keep that backup outside this repository. Do not commit it.
+`e2fsck` should finish without critical errors. The `-n` flag makes the check read-only.
 
-## Replace system.img In The Updater Folder
+## Step 3 - Verify The Two Bluetooth Libraries Inside The Image
 
-After verifying your patched image, replace the updater copy:
+Dump both files back out of the patched image and compare SHA256 hashes.
 
-```text
-C:\Users\<USER>\AppData\Local\Innioasis Updater\system.img
+Example from PowerShell:
+
+```powershell
+wsl sh -lc "cd /mnt/d/path/to/project && mkdir -p verify && debugfs -R 'dump /lib/libbluetoothdrv.so verify/libbluetoothdrv.so.from_img' patched/system.img && debugfs -R 'dump /lib/libbluetoothdrv_real.so verify/libbluetoothdrv_real.so.from_img' patched/system.img && sha256sum verify/libbluetoothdrv.so.from_img path/to/proxy/libbluetoothdrv.so verify/libbluetoothdrv_real.so.from_img path/to/original/libbluetoothdrv.so"
 ```
 
-Use your locally prepared patched `system.img` as the replacement.
+Expected result:
 
-## Open The SP Flash Tool Helper
+- the proxy hash must match `verify/libbluetoothdrv.so.from_img`
+- the original official hash must match `verify/libbluetoothdrv_real.so.from_img`
 
-Open the Innioasis Updater helper folder:
+Do not flash if either hash does not match.
+
+## Step 4 - Replace system.img In The Innioasis Updater Folder
+
+Replace `USER` and the patched image path:
+
+```powershell
+$u = "C:\Users\USER\AppData\Local\Innioasis Updater"
+
+Copy-Item "D:\path\to\patched\system.img" "$u\system.img" -Force
+
+Get-FileHash "$u\system.img"
+Get-FileHash "D:\path\to\patched\system.img"
+```
+
+The two hashes must match.
+
+## Step 5 - Open SP Flash Tool Helper
+
+Open this folder:
 
 ```text
-C:\Users\<USER>\AppData\Local\Innioasis Updater\Toolkit\SP Flash Tool
+C:\Users\USER\AppData\Local\Innioasis Updater\Toolkit\SP Flash Tool
 ```
 
 Run:
@@ -75,21 +118,29 @@ Run:
 2. Run Me + Connect Y1
 ```
 
-## Flashing Steps
+Then:
 
-1. Fully power off the Y1.
-2. Start `2. Run Me + Connect Y1`.
-3. When the tool waits for the device, connect the powered-off Y1 over USB.
-4. Do not disconnect the USB cable during flashing.
-5. Wait for the tool to finish before unplugging or powering on the device.
+- Fully power off the Y1.
+- Wait until the tool is ready for the device.
+- Connect the Y1 by USB.
+- Do not disconnect the cable during flashing.
+- Wait for the flashing process to complete.
 
-## Post-Flash Test
+## Step 6 - First Boot Test
 
-After the device boots, test:
+After flashing:
 
-- Bluetooth on/off
-- AirPods connection
-- music playback
-- play/pause
-- next track
-- previous track
+- Let the device fully boot.
+- Turn Bluetooth on.
+- Pair/connect AirPods 2.
+- Start a local music track.
+- Test sound.
+- Test play/pause.
+- Test next track.
+- Test previous track.
+
+## Rollback
+
+To roll back, restore the backed up original `system.img` into the Innioasis Updater folder and re-run the SP Flash Tool helper.
+
+This returns the system partition to the original official `system.img`.

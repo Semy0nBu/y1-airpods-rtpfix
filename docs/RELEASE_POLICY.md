@@ -1,10 +1,8 @@
 # Release Policy
 
-GitHub Releases for this project should not contain full firmware images or vendor binaries unless the publisher has explicit redistribution rights.
+GitHub Releases should not include full firmware images or vendor binaries unless explicit redistribution permission exists.
 
-The recommended release artifact is a patch kit only: documentation, source scripts, hashes, and reproducible instructions that require users to provide their own legally obtained firmware.
-
-Users must provide their own official Innioasis Y1 firmware package and build or prepare patched images locally.
+The recommended release type is documentation plus patch-kit scripts only. Users must provide their own official firmware and prepare patched images locally.
 
 Do not upload:
 
@@ -12,8 +10,24 @@ Do not upload:
 - `boot.img`
 - `rom.zip`
 - `*.so`
+- `*.bin`
 - device dumps
-- logs with Bluetooth MAC addresses
-- Ghidra projects or reverse engineering databases
+- Bluetooth logs
+- Ghidra projects
 
-Keep releases source-only unless redistribution rights are clear and documented.
+## Recommended Release Asset
+
+Example release asset name:
+
+```text
+innioasis-y1-airpods2-no-sound-fix-patch-kit-v1.0.0.zip
+```
+
+This should contain only:
+
+- documentation
+- scripts
+- checksum examples
+- no firmware
+- no vendor libraries
+- no patched binaries

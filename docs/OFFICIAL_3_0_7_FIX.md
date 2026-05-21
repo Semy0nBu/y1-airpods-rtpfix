@@ -1,18 +1,34 @@
 # Official 3.0.7 Fix Procedure
 
-This is a high-level procedure for reproducing the confirmed Innioasis Y1 official firmware 3.0.7 AirPods RTP timestamp fix. It intentionally does not include firmware images, vendor libraries, or patched binaries.
+This is a high-level procedure for reproducing the confirmed Innioasis Y1 official firmware 3.0.7 AirPods 2 RTP timestamp fix. It intentionally does not include firmware images, vendor libraries, or patched binaries.
+
+## Symptom
+
+AirPods 2 pair and connect to the Y1, and the music player appears to play a track, but no sound comes through the AirPods. Other Bluetooth headphones may work.
+
+The working diagnosis is that the outgoing A2DP/SBC media stream starts, but RTP timestamp progression is broken or incompatible with AirPods 2.
 
 ## Confirmed Result
 
 The final official 3.0.7 build uses an ADB-enabled `system.img` and the following runtime layout:
 
 ```text
-/system/lib/libbluetoothdrv.so = RTP timestamp fix proxy
-/system/lib/libbluetoothdrv_real.so = original official 3.0.7 libbluetoothdrv.so
-/system/lib/libmtkbtextadpa2dp.so = untouched
+/system/lib/libbluetoothdrv.so       = RTP timestamp fix proxy
+/system/lib/libbluetoothdrv_real.so  = original official 3.0.7 libbluetoothdrv.so
+/system/lib/libmtkbtextadpa2dp.so    = untouched original library
 ```
 
-Bluetooth works, AirPods audio works, and AirPods controls for play/pause, next track, and previous track work. No separate AVRCP patch is needed.
+Bluetooth works, AirPods 2 audio works, and AirPods controls for play/pause, next track, and previous track work. No separate AVRCP patch is needed.
+
+## Critical Warning
+
+Do not install the proxy by itself. The proxy forwards real driver operations to the original official Bluetooth driver library, which must be available as:
+
+```text
+/system/lib/libbluetoothdrv_real.so
+```
+
+A proxy-only installation can break Bluetooth startup. The earlier failed layout installed the proxy without `libbluetoothdrv_real.so`.
 
 ## High-Level Steps
 
@@ -24,8 +40,8 @@ Bluetooth works, AirPods audio works, and AirPods controls for play/pause, next 
 6. Insert the proxy and real library into the copied `system.img`:
 
 ```text
-/lib/libbluetoothdrv.so = RTP timestamp fix proxy
-/lib/libbluetoothdrv_real.so = original official 3.0.7 libbluetoothdrv.so
+/lib/libbluetoothdrv.so       = RTP timestamp fix proxy
+/lib/libbluetoothdrv_real.so  = original official 3.0.7 libbluetoothdrv.so
 ```
 
 Inside `system.img`, `/lib/...` maps to `/system/lib/...` at runtime.
@@ -45,10 +61,10 @@ e2fsck -f -n system.img
 ```
 
 10. Flash the modified `system.img` using the Innioasis Updater SP Flash Tool helper.
-11. Test Bluetooth on/off, AirPods connection, music playback, and AirPods media controls.
+11. Test Bluetooth on/off, AirPods 2 connection, music playback, and AirPods media controls.
 
 ## Notes
 
 For production builds, ADB may be visible while `adb remount` still fails. That is expected. The confirmed deployment path for official 3.0.7 is offline `system.img` modification rather than live replacement through `adb remount`.
 
-Do not install the proxy by itself. If `/system/lib/libbluetoothdrv_real.so` is missing, Bluetooth may fail to initialize because the proxy has no original driver library to delegate to.
+The final minimal fix leaves `libmtkbtextadpa2dp.so` untouched. The compatibility fix is in the Bluetooth driver write path, where the proxy normalizes outgoing A2DP/SBC RTP timestamps.
