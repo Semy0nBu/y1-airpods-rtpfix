@@ -40,3 +40,9 @@ AVRCP/media controls work in this final layout. No separate AVRCP patch is neede
 ## Safety
 
 Do not publish firmware or vendor binaries. Keep all firmware images, `.so` files, patched binaries, device dumps, logs with Bluetooth MAC addresses, and reverse engineering project files out of this repository.
+## Release Policy
+
+Releases should contain documentation, source scripts, and patch-kit materials only. Do not publish complete firmware images, `system.img`, `boot.img`, ROM zip files, `.so` vendor libraries, patched binaries, device dumps, or Bluetooth logs with MAC addresses.
+
+Users must provide their own legally obtained firmware and build patched images locally.
+
