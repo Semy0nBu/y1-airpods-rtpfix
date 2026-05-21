@@ -27,3 +27,12 @@ ghidra_projects/
 .idea/
 .DS_Store
 Thumbs.db
+build/
+dist/
+out/
+*.dll
+*.exe
+*.pdb
+*.obj
+*.o
+

@@ -46,6 +46,15 @@ The final official 3.0.7 setup confirms:
 
 No separate AVRCP patch is needed.
 
+
+## Source Code
+
+The actual fix source code is in `src/libbluetoothdrv_proxy/libbluetoothdrv_proxy.c`.
+
+It builds a `libbluetoothdrv.so` proxy. The proxy normalizes outgoing A2DP/SBC RTP timestamps for AirPods 2 compatibility, then forwards real Bluetooth driver calls to `libbluetoothdrv_real.so`.
+
+This repository does not include the compiled proxy binary. Build output is generated locally under `build/`, which is ignored by git.
+
 ## Documentation
 
 - [Official 3.0.7 fix procedure](docs/OFFICIAL_3_0_7_FIX.md)
@@ -71,3 +80,5 @@ Do not upload `system.img`, `boot.img`, ROM zip files, vendor libraries, patched
 - SBC RTP timestamp AirPods fix
 - AirPods connected silent music player
 - Innioasis Y1 official firmware 3.0.7 AirPods fix
+
+
