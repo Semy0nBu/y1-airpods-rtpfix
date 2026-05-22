@@ -46,6 +46,20 @@ On the final official 3.0.7 setup, these were confirmed:
 
 No separate AVRCP patch was needed.
 
+## Ready-made community ROM
+
+A ready-made unofficial community ROM is available in GitHub Releases.
+
+It is based on Innioasis Y1 official firmware 3.0.7 and includes the AirPods 2 no-sound fix.
+
+This is not an official Innioasis firmware release.
+
+The release build keeps normal stock-like USB storage behavior and does not enable ADB.
+
+For users who prefer not to build the patch locally, download the community ROM from the Releases page and follow the release installation notes.
+
+Also keep the source/build instructions for users who prefer to build locally.
+
 ## Source Code
 
 The fix source code is in `src/libbluetoothdrv_proxy/libbluetoothdrv_proxy.c`.
@@ -72,11 +86,11 @@ The helper script builds the RTP timestamp fix proxy, patches a copy of your own
 
 ## Release Policy
 
-This repo does not distribute complete firmware or vendor `.so` files.
+The git repo stays source-only: do not commit `system.img`, `boot.img`, ROM zip files, vendor libraries, patched binaries, device dumps, or Bluetooth logs.
 
-Releases should contain documentation, scripts, and patch-kit style helpers only. Users need to provide their own legally obtained official firmware package and build or prepare the patched image locally.
+GitHub Releases may provide ready-made unofficial community ROM assets when they are clearly labeled as community builds and include safety notes, checksums, and rollback instructions.
 
-Do not upload `system.img`, `boot.img`, ROM zip files, vendor libraries, patched binaries, device dumps, or Bluetooth logs.
+Source code and patch-kit workflows remain available for users who prefer to build locally from their own official firmware package.
 
 ## Search Keywords
 
@@ -88,4 +102,6 @@ Do not upload `system.img`, `boot.img`, ROM zip files, vendor libraries, patched
 - SBC RTP timestamp AirPods fix
 - AirPods connected silent music player
 - Innioasis Y1 official firmware 3.0.7 AirPods fix
+
+
 

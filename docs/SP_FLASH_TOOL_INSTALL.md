@@ -45,6 +45,19 @@ Inside `system.img`, `/lib/...` becomes `/system/lib/...` at runtime.
 
 Do not install the proxy alone. It needs the original official Bluetooth driver at `/lib/libbluetoothdrv_real.so`.
 
+## Installing The Ready-made Community ROM
+
+A ready-made unofficial community ROM may be downloaded from GitHub Releases.
+
+Before flashing:
+
+- Download the release zip.
+- Verify the release zip SHA256 against `SHA256SUMS.txt`.
+- Use the Innioasis Updater / SP Flash Tool helper.
+- Fully power off the Y1 before connecting it by USB.
+- Do not disconnect the USB cable during flashing.
+- To roll back, flash the original Innioasis Y1 firmware 3.0.7 again with Innioasis Updater / SP Flash Tool helper.
+
 ## Step 1 - Back Up The Original Updater Image
 
 Use a PowerShell prompt. Replace `USER` with your Windows user name:
@@ -148,4 +161,6 @@ These tests confirm both A2DP audio and AVRCP media controls.
 To roll back, restore the backed up original `system.img` into the Innioasis Updater folder and re-run the SP Flash Tool helper.
 
 This returns the system partition to the original official `system.img`.
+
+
 

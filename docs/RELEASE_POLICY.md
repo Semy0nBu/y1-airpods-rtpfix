@@ -1,31 +1,46 @@
 # Release Policy
 
-GitHub Releases for this project should stay source-only and patch-kit style unless there is clear permission to redistribute firmware or vendor binaries.
+Innioasis has replied that community ROM distribution is allowed, including ROMs based on their firmware, as long as it does not break devices. They also forwarded the AirPods 2 fix feedback to their R&D team and may include a fix in an official firmware update if possible.
 
-The recommended release type is documentation plus scripts. Users should provide their own official Innioasis Y1 firmware and prepare patched images locally.
+Ready-made community ROM releases may be provided for users who do not want to build the patch locally.
 
-Please do not upload:
+## Requirements For Community ROM Releases
+
+- Clearly mark every ready-made ROM as an unofficial community build.
+- Do not call community ROMs official firmware.
+- Include warnings that flashing is at the user's own risk.
+- Include battery, USB disconnect, and device model warnings.
+- Include SHA256 checksums for release assets.
+- Include rollback notes that point users back to original Innioasis Y1 firmware 3.0.7.
+- Keep source code and the patch-kit workflow available for users who prefer to build locally.
+
+## Repository Rules
+
+The git repository should stay source-only. Do not commit firmware images, ROM zips, vendor libraries, patched binaries, dumps, logs, or Ghidra projects.
+
+Release assets may be attached to GitHub Releases when they follow the community ROM requirements above.
+
+Do not commit:
 
 - `system.img`
 - `boot.img`
-- `rom.zip`
+- ROM zip files
 - `*.so`
 - `*.bin`
+- `*.apk`
 - device dumps
 - Bluetooth logs
 - Ghidra projects
 
-This keeps the project useful without redistributing files that may be owned by the device vendor or may contain private device data.
+## Recommended Release Assets
 
-## Recommended Release Asset
+For ready-made community ROM releases, include:
 
-Example release asset name:
+- the unofficial community ROM zip
+- `SHA256SUMS.txt`
+- release notes with installation and rollback steps
 
-```text
-innioasis-y1-airpods2-no-sound-fix-patch-kit-v1.0.0.zip
-```
-
-A release asset like this should contain only:
+For source-only releases, patch-kit assets may contain:
 
 - documentation
 - scripts
