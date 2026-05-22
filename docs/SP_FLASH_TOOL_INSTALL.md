@@ -2,7 +2,7 @@
 
 This guide assumes that you own the device and have legally obtained the official Innioasis Y1 firmware package. This repo does not include firmware images or vendor binaries.
 
-The goal is to install a patched `system.img` that you prepared locally. Take your time with the verification steps. They are there to catch mistakes before anything is flashed.
+The goal is to install a patched `system.img` that you prepared locally. The easiest path is to prepare that image first with `scripts/prepare_fixed_system_img.ps1`, then come back to this guide for the manual SP Flash Tool steps. Take your time with the verification steps. They are there to catch mistakes before anything is flashed.
 
 ## What This Guide Does
 
@@ -148,3 +148,4 @@ These tests confirm both A2DP audio and AVRCP media controls.
 To roll back, restore the backed up original `system.img` into the Innioasis Updater folder and re-run the SP Flash Tool helper.
 
 This returns the system partition to the original official `system.img`.
+

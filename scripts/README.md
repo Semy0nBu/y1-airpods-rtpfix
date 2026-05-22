@@ -2,7 +2,17 @@
 
 This directory is for helper scripts that are safe to publish. Scripts here should be source-only and should not include firmware, vendor binaries, patched binaries, or device dumps.
 
-The current build script can compile the RTP timestamp fix proxy locally when you provide an Android NDK. Future scripts may help with image preparation, but they should stay careful and reversible.
+## Main Helper
+
+`prepare_fixed_system_img.ps1` is the main user-facing helper. It prepares a patched copy of the user's own official `system.img` for the Innioasis Y1 AirPods 2 RTP timestamp fix.
+
+It can build the RTP timestamp fix proxy from source with Android NDK, or it can use an already built local proxy with `-SkipBuild -ProxyPath`.
+
+The script prepares files only. It does not flash automatically, does not call `adb`, and does not touch a connected device.
+
+## Other Build Helper
+
+`build_minimal_airpods_rtpfix_proxy.ps1` only builds the proxy into the ignored local `build/` folder. It does not patch images or flash anything.
 
 Expected script responsibilities:
 

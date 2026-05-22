@@ -54,8 +54,16 @@ It builds a `libbluetoothdrv.so` proxy. The proxy normalizes outgoing A2DP/SBC R
 
 This repo does not include the compiled proxy binary. Build output is created locally under `build/`, which is ignored by git.
 
-## Documentation
 
+## Easiest Safe Install Path
+
+The repo now includes source code and a helper script that prepares the patched `system.img` locally from your own official firmware image.
+
+Start here: [One-script patch-kit workflow](docs/PATCH_KIT_ONE_SCRIPT.md).
+
+The helper script builds the RTP timestamp fix proxy, patches a copy of your own `system.img`, verifies the inserted files, and stops. It does not include firmware, does not include vendor binaries, does not flash, and does not call `adb`. Flashing is still a manual step through the Innioasis Updater SP Flash Tool helper.
+
+## Documentation
 - [Official 3.0.7 fix procedure](docs/OFFICIAL_3_0_7_FIX.md)
 - [Build from source](docs/BUILD_FROM_SOURCE.md)
 - [SP Flash Tool installation guide](docs/SP_FLASH_TOOL_INSTALL.md)
@@ -80,3 +88,4 @@ Do not upload `system.img`, `boot.img`, ROM zip files, vendor libraries, patched
 - SBC RTP timestamp AirPods fix
 - AirPods connected silent music player
 - Innioasis Y1 official firmware 3.0.7 AirPods fix
+

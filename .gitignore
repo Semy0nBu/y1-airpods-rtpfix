@@ -35,4 +35,8 @@ out/
 *.pdb
 *.obj
 *.o
+out/
+work/
+dist/
+build/
 
