@@ -47,16 +47,52 @@ Do not install the proxy alone. It needs the original official Bluetooth driver 
 
 ## Installing The Ready-made Community ROM
 
-A ready-made unofficial community ROM may be downloaded from GitHub Releases.
+A ready-made unofficial community ROM may be downloaded from GitHub Releases. This is the easiest install path if you do not want to build or patch `system.img` yourself.
 
-Before flashing:
+1. Download this file from GitHub Releases:
 
-- Download the release zip.
-- Verify the release zip SHA256 against `SHA256SUMS.txt`.
-- Use the Innioasis Updater / SP Flash Tool helper.
-- Fully power off the Y1 before connecting it by USB.
-- Do not disconnect the USB cable during flashing.
-- To roll back, flash the original Innioasis Y1 firmware 3.0.7 again with Innioasis Updater / SP Flash Tool helper.
+```text
+innioasis-y1-3.0.7-airpods2-fix-community-rom-v1.0.0.zip
+```
+
+2. Open this folder on your Windows PC:
+
+```text
+C:\Users\<USER>\AppData\Local\Innioasis Updater\Toolkit\SP Flash Tool
+```
+
+Replace `<USER>` with your Windows user name.
+
+3. Drag the downloaded ROM zip onto:
+
+```text
+1. Drag the files from rom.zip here
+```
+
+4. Then run:
+
+```text
+2. Run Me + Connect Y1
+```
+
+5. Fully power off the Y1.
+6. Connect the Y1 by USB only when the helper waits for the device.
+7. Do not disconnect the USB cable while flashing.
+8. Wait for flashing to finish.
+9. Boot the player and test:
+
+- Bluetooth
+- AirPods 2 audio
+- AirPods 2 media controls
+- USB storage / disk access
+
+Optional but recommended: verify the release zip SHA256 against `SHA256SUMS.txt` before flashing.
+
+To roll back, flash the original Innioasis Y1 firmware 3.0.7 again with the Innioasis Updater / SP Flash Tool helper.
+
+Do not use `Format All`.
+
+Do not flash random partitions.
 
 ## Step 1 - Back Up The Original Updater Image
 
